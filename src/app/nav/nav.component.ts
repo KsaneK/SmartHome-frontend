@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { AccountService } from "../services/account.service";
+import { UserStatus } from "../interfaces/user-status";
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })
-export class NavComponent {
+export class NavComponent implements OnInit {
+  user: UserStatus;
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches)
-    );
+  public ngOnInit() {
+    this.accountService.get_user_status().subscribe(status => {
+      this.user = status;
+    });
+  }
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(private accountService: AccountService) {}
 
 }

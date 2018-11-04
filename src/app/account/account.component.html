@@ -32,19 +32,22 @@
   </mat-tab>
 
   <mat-tab label="Login">
-    <div class="form-container">
-      <mat-form-field appearance="outline">
-        <mat-label>Login</mat-label>
-        <input name="login" placeholder="Enter your login" matInput>
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput placeholder="Enter your password" type="password" name="password">
-        <mat-icon matSuffix>lock</mat-icon>
-      </mat-form-field>
-      <button mat-flat-button color="primary">Login</button>
-    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="form-container">
+        <mat-card *ngIf="loginError">{{ loginError }}</mat-card>
+        <mat-form-field appearance="outline">
+          <mat-label>Login</mat-label>
+          <input placeholder="Enter your login" matInput formControlName="username">
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Enter your password" type="password" formControlName="password">
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+        <button mat-flat-button color="primary">Login</button>
+      </div>
+    </form>
   </mat-tab>
 
   <mat-tab label="Forgot password">

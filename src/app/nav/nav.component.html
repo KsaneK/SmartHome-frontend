@@ -28,8 +28,10 @@
         <mat-icon class="toolbar-icon">account_circle</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item><a mat-list-item routerLink="account/login">Login</a></button>
-        <button mat-menu-item><a mat-list-item routerLink="account/register">Sign up</a></button>
+        <button mat-menu-item *ngIf="!user || user.status=='not_authenticated'"><a mat-list-item routerLink="account/login">Login</a></button>
+        <button mat-menu-item *ngIf="!user || user.status=='not_authenticated'"><a mat-list-item routerLink="account/register">Sign up</a></button>
+        <button mat-menu-item *ngIf="user && user.status=='authenticated'"><a mat-list-item routerLink="profile">{{ user.username }}</a></button>
+        <button mat-menu-item *ngIf="user && user.status=='authenticated'"><a mat-list-item routerLink="profile/logout">Logout</a></button>
       </mat-menu>
 
     </mat-toolbar>

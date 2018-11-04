@@ -12,14 +12,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
 import { AccountComponent } from './account/account.component';
-import {AccountService} from "./services/account.service";
+import { AccountService } from "./services/account.service";
+import { ProfileComponent } from './profile/profile.component';
 
 
 const appRoutes: Routes = [
-  {path: '', component: HomeComponent, data: {title: 'Home'}},
-  {path: 'home', component: HomeComponent, data: {title: 'Home'}},
-  {path: 'account', component: AccountComponent, data: {title: 'Account'}},
-  {path: 'account/:tab', component: AccountComponent, data: {title: 'Account'}}
+  {path: '', component: HomeComponent},
+  {path: 'home', component: HomeComponent},
+  {path: 'account', component: AccountComponent},
+  {path: 'account/:tab', component: AccountComponent},
+  {path: 'profile', component: ProfileComponent},
+  {path: 'profile/:tab', component: ProfileComponent}
 ];
 
 @NgModule({
@@ -27,7 +30,8 @@ const appRoutes: Routes = [
     AppComponent,
     NavComponent,
     HomeComponent,
-    AccountComponent
+    AccountComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
