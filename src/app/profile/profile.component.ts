@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountService } from "../services/account.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: 'app-profile',
@@ -13,7 +14,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   constructor(private accountService: AccountService,
               private router: Router,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.accountService.refresh_user_status();
@@ -24,6 +26,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(params => {
       if (params['tab'] == 'logout') {
         this.accountService.logout();
+        this.snackBar.open("Logged out!", "OK", {duration: 2000});
         this.router.navigate(['/home']);
       }
     })
@@ -32,5 +35,4 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.user_status_sub.unsubscribe();
   }
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatTabChangeEvent } from "@angular/material";
+import { MatSnackBar, MatTabChangeEvent } from "@angular/material";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AccountService } from "../services/account.service";
 import { Subscription } from "rxjs";
@@ -31,7 +31,8 @@ export class AccountComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private route: ActivatedRoute,
-              private accountService: AccountService) {
+              private accountService: AccountService,
+              public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -71,24 +72,35 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   private register_account() {
     this.accountService.create_account(this.signUpForm).subscribe(response => {
+      this.snackBar.open("Account created!", "OK", {duration: 2000});
       return this.router.navigate(['/home']);
     }, err => {
       this.signUpErrors.username = [];
       this.signUpErrors.email = [];
       this.signUpErrors.password1 = [];
       this.signUpErrors.password2 = [];
+      if (err.status == 404) {
+        this.signUpErrors.password2.push("Service is unavailable.");
+        return;
+      }
       for (const [key, value] of Object.entries(err.error.errors)) this.signUpErrors[key].push(value)
     });
   }
 
   private login() {
     this.accountService.login(this.loginForm).subscribe(response => {
-      if (response.status === "authenticated")
+      if (response.status === "authenticated") {
+        this.snackBar.open("Logged in!", "OK", {duration: 2000});
         return this.router.navigate(['/home']);
+      }
       else
         this.loginError = response.error;
     }, err => {
-      console.log(err);
+      if (err.status == 404) {
+        this.loginError = "Service is unavailable.";
+      } else {
+        console.log(err);
+      }
     })
   }
 }

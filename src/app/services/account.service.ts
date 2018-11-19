@@ -27,6 +27,8 @@ export class AccountService {
   public refresh_user_status(): void {
     this.http.get<UserStatus>("/api/account/status").subscribe(status => {
       this.user_subject.next(status);
+    }, err => {
+      console.log("Backend not responding.");
     });
   }
 
