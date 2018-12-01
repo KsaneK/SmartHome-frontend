@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AccountService } from "../services/account.service";
-import { UserStatus } from "../interfaces/user-status";
+import { AccountService } from '../services/account.service';
+import { UserStatus } from '../interfaces/user-status';
 
 @Component({
   selector: 'app-nav',

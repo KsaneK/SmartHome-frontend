@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AccountService } from "./services/account.service";
+import { AccountService } from './services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -7,11 +7,11 @@ import { AccountService } from "./services/account.service";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public ngOnInit() {
-    this.accountService.refresh_user_status();
-  }
 
   constructor(private accountService: AccountService) {}
 
   title = 'smart-home';
+  public ngOnInit() {
+    this.accountService.refresh_user_status();
+  }
 }

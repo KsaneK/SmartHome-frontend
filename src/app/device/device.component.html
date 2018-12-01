@@ -1,0 +1,75 @@
+<h2>Your devices</h2>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Add device in three easy steps!
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-horizontal-stepper #stepper>
+    <mat-step [stepControl]="addDeviceBasicFormGroup">
+      <form [formGroup]="addDeviceBasicFormGroup">
+        <ng-template matStepLabel>Basic device informations</ng-template>
+        <mat-form-field class="display-table">
+          <input matInput placeholder="Device name" formControlName="devName" required>
+        </mat-form-field>
+        <mat-form-field class="display-table">
+          <mat-select placeholder="Device Type" formControlName="devType">
+            <mat-option *ngFor="let type of ['Camera', 'Light']" [value]="type">
+              {{ type }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <form>
+        <ng-template matStepLabel>Capabilities</ng-template>
+        <table mat-table [dataSource]="capabilities" class="mat-elevation-z8">
+
+          <!-- Capability Name Column -->
+          <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+
+          <!-- Capability Component Column -->
+          <ng-container matColumnDef="Component">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.component}} </td>
+          </ng-container>
+
+          <!-- Table columns -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Add Capability -->
+        <input matInput placeholder="Device name" formControlName="capabilityName" required>
+        <mat-select placeholder="Device Type" id="capabilityType">
+          <mat-option *ngFor="let type of ['Switch On/Off', 'Switch Level']" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+        <button mat-mini-fab color="primary" id="addCapability">+</button> Add capability
+
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Authorized users</ng-template>
+      You are now done.
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+
+</mat-expansion-panel>

@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar, MatTabChangeEvent } from "@angular/material";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AccountService } from "../services/account.service";
-import { Subscription } from "rxjs";
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatTabChangeEvent } from '@angular/material';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AccountService } from '../services/account.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-account',
@@ -14,17 +14,22 @@ export class AccountComponent implements OnInit, OnDestroy {
   /**
    * Selected tab index (0 - register, 1 - login, 2 - forgot-password)
    */
-  private selectedIndex: int;
+  private selectedIndex: number;
 
   private loginForm: FormGroup;
   private loginError: string;
   private signUpForm: FormGroup;
-  private signUpErrors = {username: [], password1: [], password2: [], email: []};
+  private signUpErrors: Map<string, Array<string>> = new Map([
+    ['username', []],
+    ['password1', []],
+    ['password2', []],
+    ['email', []],
+  ]);
 
   forms = {
-    "register": 0,
-    "login": 1,
-    "forgot-password": 2
+    'register': 0,
+    'login': 1,
+    'forgot-password': 2
   };
   private user_status_sub: Subscription;
 
@@ -50,8 +55,8 @@ export class AccountComponent implements OnInit, OnDestroy {
     });
 
     this.user_status_sub = this.accountService.get_user_status().subscribe(res => {
-      if (res && res.status === "authenticated") {
-        this.router.navigate(['/home'])
+      if (res && res.status === 'authenticated') {
+        this.router.navigate(['/home']);
       }
     });
 
@@ -65,42 +70,42 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   private update_route(tabChangeEvent: MatTabChangeEvent) {
-    let tab = tabChangeEvent.tab.textLabel.toLowerCase().replace(" ", "-");
+    const tab = tabChangeEvent.tab.textLabel.toLowerCase().replace(' ', '-');
     this.router.navigate(['/account', tab]);
   }
 
 
   private register_account() {
     this.accountService.create_account(this.signUpForm).subscribe(response => {
-      this.snackBar.open("Account created!", "OK", {duration: 2000});
+      this.snackBar.open('Account created!', 'OK', {duration: 2000});
       return this.router.navigate(['/home']);
     }, err => {
-      this.signUpErrors.username = [];
-      this.signUpErrors.email = [];
-      this.signUpErrors.password1 = [];
-      this.signUpErrors.password2 = [];
-      if (err.status == 404) {
-        this.signUpErrors.password2.push("Service is unavailable.");
+      this.signUpErrors['username'] = [];
+      this.signUpErrors['email'] = [];
+      this.signUpErrors['password1'] = [];
+      this.signUpErrors['password2'] = [];
+      if (err.status === 404) {
+        this.signUpErrors['password2'].push('Service is unavailable.');
         return;
       }
-      for (const [key, value] of Object.entries(err.error.errors)) this.signUpErrors[key].push(value)
+      for (const [key, value] of Object.entries(err.error.errors)) { this.signUpErrors[key].push(value); }
     });
   }
 
   private login() {
     this.accountService.login(this.loginForm).subscribe(response => {
-      if (response.status === "authenticated") {
-        this.snackBar.open("Logged in!", "OK", {duration: 2000});
+      if (response.status === 'authenticated') {
+        this.snackBar.open('Logged in!', 'OK', {duration: 2000});
         return this.router.navigate(['/home']);
-      }
-      else
+      } else {
         this.loginError = response.error;
+      }
     }, err => {
-      if (err.status == 404) {
-        this.loginError = "Service is unavailable.";
+      if (err.status === 404) {
+        this.loginError = 'Service is unavailable.';
       } else {
         console.log(err);
       }
-    })
+    });
   }
 }

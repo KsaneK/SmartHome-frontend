@@ -1,10 +1,10 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { AccountService } from "../services/account.service";
+import { AccountService } from '../services/account.service';
 import {
   IMqttMessage,
   MqttService
 } from 'ngx-mqtt';
-import { Subscription } from "rxjs/internal/Subscription";
+import { Subscription } from 'rxjs/internal/Subscription';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
     });
     this.subscription = this._mqttService.observe('window/open').subscribe((message: IMqttMessage) => {
       console.log(message);
-      this.window_status = (message.payload.toString() == "1") ? "otwarte" : "zamknięte";
+      this.window_status = (message.payload.toString() === '1') ? 'otwarte' : 'zamknięte';
     });
   }
 

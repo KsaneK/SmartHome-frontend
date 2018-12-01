@@ -8,7 +8,11 @@
     <mat-toolbar color="primary">Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item routerLink="home">Home</a>
-      <a mat-list-item routerLink="logout" *ngIf="logged">Logout</a>
+      <span *ngIf="user && user.status == 'authenticated'">
+        <a mat-list-item routerLink="devices">My devices</a>
+        <a mat-list-item routerLink="profile/logout">Logout</a>
+      </span>
+
     </mat-nav-list>
   </mat-sidenav>
 
