@@ -23,6 +23,7 @@ export const ICON_LIST: CapabilityIcon[] = [
   {label: 'Play',        class: 'fas fa-play'},
   {label: 'Plug',        class: 'fas fa-plug'},
   {label: 'Power',       class: 'fas fa-power-off'},
+  {label: 'Sun',         class: 'fas fa-sun'},
   {label: 'Thermometer', class: 'fas fa-thermometer-half'},
   {label: 'Volume',      class: 'fas fa-volume-up'},
 ];

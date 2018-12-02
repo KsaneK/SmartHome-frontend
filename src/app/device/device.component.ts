@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { CapabilityIcon, ICON_LIST } from './device.icons';
 import { Capability } from '../interfaces/capability';
 import { DeviceType } from '../interfaces/device-type';
-import { MatSnackBar } from '@angular/material';
+import { MatSelectChange, MatSnackBar } from '@angular/material';
+import { Device } from '../interfaces/device';
 
 @Component({
   selector: 'app-device',
@@ -19,6 +20,7 @@ export class DeviceComponent implements OnInit {
   iconList: CapabilityIcon[] = ICON_LIST;
   capabilities: Capability[];
   deviceTypes: DeviceType[];
+  devices: Device[];
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -30,10 +32,12 @@ export class DeviceComponent implements OnInit {
     this.addDeviceFormGroup = this.formBuilder.group({
       devName: ['', Validators.required],
       devType: ['', Validators.required],
+      mainCapability: ['', Validators.required],
       capabilities: this.formBuilder.array([this.initItemRows()])
     });
     this.loadCapabilities();
     this.loadDeviceTypes();
+    this.loadMyDevices();
   }
 
   private initItemRows(): FormGroup {
@@ -58,7 +62,7 @@ export class DeviceComponent implements OnInit {
     this.deviceService.add_device(this.addDeviceFormGroup).then(response => {
       if (response.status === 'success') {
         this.snackBar.open('Device created!', 'OK', {duration: 2000});
-        return this.router.navigate(['/dev/' + response.name]);
+        return this.router.navigate(['/home']);
       } else {
         this.errorMessage = response.error;
       }
@@ -76,6 +80,12 @@ export class DeviceComponent implements OnInit {
   private loadDeviceTypes(): void {
     this.deviceService.get_device_types().then(response => {
       this.deviceTypes = response;
+    });
+  }
+
+  private loadMyDevices(): void {
+    this.deviceService.get_my_devices().then(response => {
+      this.devices = response;
     });
   }
 

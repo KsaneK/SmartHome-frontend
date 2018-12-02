@@ -49,11 +49,18 @@
               </div>
             </div>
           </div>
+          <button mat-mini-fab color="primary" id="addCapability" class="right" (click)="addCapability()">
+            +
+          </button>
         </div>
-
-        <button mat-mini-fab color="primary" id="addCapability" class="display-table" (click)="addCapability()">
-          +
-        </button>
+        <mat-form-field appearance="outline">
+          <mat-select placeholder="Main Capability" formControlName="mainCapability">
+            <mat-option *ngFor="let cap of addDeviceFormGroup.controls.capabilities.value; let i=index" [value]="i">
+              {{ cap.capabilityName }}
+            </mat-option>
+          </mat-select>
+          <span class="spacer"></span>
+        </mat-form-field>
 
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -78,3 +85,25 @@
   </mat-horizontal-stepper>
 
 </mat-expansion-panel>
+
+<div id="device-container">
+  <mat-card class="device-card" *ngFor="let dev of devices">
+    <mat-card-content class="card-flex">
+      <div class="card-icon">
+        <div mat-card-avatar><i class="fa-4x {{ dev.type.icon }}"></i></div>
+      </div>
+      <div class="card-info">
+        <mat-card-title>{{ dev.name }}</mat-card-title>
+        <mat-card-subtitle [ngSwitch]="dev.mainCapability.component">
+          <i class="{{ dev.mainCapability.icon }}"></i> {{ dev.mainCapability.label }}<br>
+          <div class="card-component">
+            <mat-slide-toggle *ngSwitchCase="'switch'" color="primary"></mat-slide-toggle>
+            <mat-slider thumbLabel *ngSwitchCase="'slider'" min="1" max="100" step="1" tickInterval="1" color="primary">
+            </mat-slider>
+            <span *ngSwitchCase="'text'" class="card-sensor-text">20°C</span>
+          </div>
+        </mat-card-subtitle>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

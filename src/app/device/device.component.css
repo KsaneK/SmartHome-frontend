@@ -2,6 +2,10 @@
   display: table;
 }
 
+.toolbar-icon {
+  cursor: pointer;
+}
+
 #addCapability {
   margin-left: 10px;
   margin-bottom: 10px;
@@ -38,4 +42,40 @@
 .mat-card {
   color: red;
   margin-top: 10px;
+}
+
+.device-card {
+  width: 300px;
+  color: black;
+  margin: 30px;
+}
+
+.card-icon {
+  width: 25%;
+  height: 100%;
+}
+
+.card-flex {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+}
+
+mat-card-subtitle {
+  padding-top: 10px;
+}
+
+#device-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.card-component {
+  margin-top: 15px;
+}
+
+.card-sensor-text {
+  font-size: 22px;
+  color: black;
 }

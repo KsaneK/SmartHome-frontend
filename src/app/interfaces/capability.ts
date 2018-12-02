@@ -3,4 +3,6 @@ export interface Capability {
   name: string;
   type: string;
   component: string;
+  icon: string;
+  label: string;
 }
