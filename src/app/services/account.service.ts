@@ -12,6 +12,7 @@ import { LoginResponse } from '../interfaces/login-response';
 })
 export class AccountService {
   user_subject: Subject<any> = new Subject<any>();
+  username: string;
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +28,9 @@ export class AccountService {
   public refresh_user_status(): void {
     this.http.get<UserStatus>('/api/account/status').subscribe(status => {
       this.user_subject.next(status);
+      if (status.status === 'authenticated') {
+        this.username = status.username;
+      }
     }, err => {
       console.log('Backend not responding.');
     });
@@ -47,5 +51,9 @@ export class AccountService {
       .set('username', loginForm.value.username)
       .set('password', loginForm.value.password);
     return this.http.post<LoginResponse>('/api/account/login', params);
+  }
+
+  public get_username(): string {
+    return this.username;
   }
 }

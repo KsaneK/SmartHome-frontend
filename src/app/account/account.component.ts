@@ -15,7 +15,6 @@ export class AccountComponent implements OnInit, OnDestroy {
    * Selected tab index (0 - register, 1 - login, 2 - forgot-password)
    */
   private selectedIndex: number;
-
   private loginForm: FormGroup;
   private loginError: string;
   private signUpForm: FormGroup;

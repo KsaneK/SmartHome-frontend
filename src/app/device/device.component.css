@@ -6,3 +6,36 @@
   margin-left: 10px;
   margin-bottom: 10px;
 }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  /*flex-direction: row;*/
+  /*width:100%;*/
+}
+
+.grid {
+  display: flex;
+  padding: 10px 0;
+}
+
+.capability-group {
+  width: auto;
+  display: flex;
+  margin: 10px 0 10px 0;
+}
+
+.capability-tab {
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 15px;
+  padding: 10px 20px;
+}
+
+#addCapability {
+  margin-top: 10px;
+}
+
+.mat-card {
+  color: red;
+  margin-top: 10px;
+}

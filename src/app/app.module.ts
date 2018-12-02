@@ -15,6 +15,7 @@ import { AccountService } from './services/account.service';
 import { ProfileComponent } from './profile/profile.component';
 import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 import { DeviceComponent } from './device/device.component';
+import { DeviceService } from './services/device.service';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
@@ -44,7 +45,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     MaterialModule,
     HttpClientModule,
   ],
-  providers: [AccountService],
+  providers: [AccountService, DeviceService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

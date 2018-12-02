@@ -12,7 +12,11 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatCardModule,
-  MatSnackBarModule, MatExpansionModule, MatStepperModule, MatSelectModule, MatTableModule,
+  MatSnackBarModule,
+  MatExpansionModule,
+  MatStepperModule,
+  MatSelectModule,
+  MatTableModule,
 } from '@angular/material';
 
 @NgModule({

@@ -2,21 +2,21 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
-      Add device in three easy steps!
+      Add device in two easy steps!
     </mat-panel-title>
   </mat-expansion-panel-header>
 
   <mat-horizontal-stepper #stepper>
-    <mat-step [stepControl]="addDeviceBasicFormGroup">
-      <form [formGroup]="addDeviceBasicFormGroup">
+    <mat-step [stepControl]="addDeviceFormGroup">
+      <form [formGroup]="addDeviceFormGroup">
         <ng-template matStepLabel>Basic device informations</ng-template>
         <mat-form-field class="display-table">
           <input matInput placeholder="Device name" formControlName="devName" required>
         </mat-form-field>
         <mat-form-field class="display-table">
           <mat-select placeholder="Device Type" formControlName="devType">
-            <mat-option *ngFor="let type of ['Camera', 'Light']" [value]="type">
-              {{ type }}
+            <mat-option *ngFor="let type of deviceTypes" [value]="type.id">
+              <i class="{{ type.icon }}"></i> {{ type.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -25,36 +25,35 @@
         </div>
       </form>
     </mat-step>
-    <mat-step>
-      <form>
+    <mat-step [stepControl]="addDeviceFormGroup">
+      <form [formGroup]="addDeviceFormGroup">
         <ng-template matStepLabel>Capabilities</ng-template>
-        <table mat-table [dataSource]="capabilities" class="mat-elevation-z8">
 
-          <!-- Capability Name Column -->
-          <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
+        <div formArrayName="capabilities" class="capability-tab">
+          <div *ngFor="let capability of addDeviceFormGroup.controls.capabilities.controls; let i=index">
+            <div class="row">
+              <div [formGroupName]="i" class="grid">
+                <input matInput formControlName="capabilityName" placeholder="Capability name">
+                <mat-select placeholder="Capability Type" formControlName="capabilityType">
+                  <mat-option *ngFor="let cap of capabilities" [value]="cap.id">
+                    {{ cap.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-select placeholder="Icon" formControlName="capabilityIcon">
+                  <mat-option *ngFor="let icon of iconList" [value]="icon.class">
+                    <i class="{{ icon.class }}"></i> {{ icon.label }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon class="toolbar-icon" (click)="removeCapability(i)"
+                    *ngIf="addDeviceFormGroup.controls.capabilities.length > 1">delete</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <!-- Capability Component Column -->
-          <ng-container matColumnDef="Component">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.component}} </td>
-          </ng-container>
-
-          <!-- Table columns -->
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <!-- Add Capability -->
-        <input matInput placeholder="Device name" formControlName="capabilityName" required>
-        <mat-select placeholder="Device Type" id="capabilityType">
-          <mat-option *ngFor="let type of ['Switch On/Off', 'Switch Level']" [value]="type">
-            {{ type }}
-          </mat-option>
-        </mat-select>
-        <button mat-mini-fab color="primary" id="addCapability">+</button> Add capability
+        <button mat-mini-fab color="primary" id="addCapability" class="display-table" (click)="addCapability()">
+          +
+        </button>
 
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -63,12 +62,18 @@
       </form>
     </mat-step>
     <mat-step>
-      <ng-template matStepLabel>Authorized users</ng-template>
-      You are now done.
+      <ng-template matStepLabel>Finish</ng-template>
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button (click)="addDevice()"
+                [disabled]="!addDeviceFormGroup.controls.devName.valid ||
+                !addDeviceFormGroup.controls.devType.valid ||
+                !addDeviceFormGroup.controls.capabilities.valid ||
+                !areCapabilitiesUnique()">
+          Add device!
+        </button>
       </div>
+      <mat-card *ngIf="errorMessage">{{ errorMessage }}</mat-card>
     </mat-step>
   </mat-horizontal-stepper>
 
