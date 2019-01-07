@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AccountService } from '../services/account.service';
 import {
   IMqttMessage,
   MqttService
 } from 'ngx-mqtt';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { EOVERFLOW } from 'constants';
 
 
 @Component({
@@ -12,24 +13,36 @@ import { Subscription } from 'rxjs/internal/Subscription';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
-  private subscription: Subscription;
-  private temperature: string;
-  private window_status: string;
+export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('fullpageRef') fp_directive: ElementRef;
+  private fullpage_api: any;
+  private config: any;
 
+  constructor(private accountService: AccountService) {
+    this.config = {
+      licenseKey: null,
+      anchors: ['main', 'add-device', 'show-devices', 'control-device'],
+      menu: '#menu',
+      controlArrows: true,
+      loopHorizontal: false,
+      dragAndMove: true,
+      navigation: true,
+    };
+  }
 
-  constructor(private accountService: AccountService,
-              private _mqttService: MqttService) { }
+  getRef(fullPageRef) {
+    this.fullpage_api = fullPageRef;
+  }
 
   ngOnInit() {
     this.accountService.refresh_user_status();
-    this.subscription = this._mqttService.observe('Termometr').subscribe((message: IMqttMessage) => {
-      this.temperature = message.payload.toString();
-    });
-    this.subscription = this._mqttService.observe('window/open').subscribe((message: IMqttMessage) => {
-      console.log(message);
-      this.window_status = (message.payload.toString() === '1') ? 'otwarte' : 'zamknięte';
-    });
+    document.getElementsByClassName('mat-sidenav-content').item(0)
+      .setAttribute('style', 'overflow: hidden;');
+  }
+
+  ngOnDestroy(): void {
+    document.getElementsByClassName('mat-sidenav-content').item(0)
+      .setAttribute('style', 'overflow: scroll;');
   }
 
 }

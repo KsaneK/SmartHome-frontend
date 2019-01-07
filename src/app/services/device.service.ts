@@ -5,6 +5,7 @@ import { AddDeviceResponse } from '../interfaces/add-device-response';
 import { Capability } from '../interfaces/capability';
 import { DeviceType } from '../interfaces/device-type';
 import { Device } from '../interfaces/device';
+import { GetDeviceResponse } from '../interfaces/get-device-response';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,9 @@ export class DeviceService {
 
   public get_my_devices(): Promise<Device[]> {
     return this.http.get<Device[]>('/api/device/get').toPromise();
+  }
+
+  public get_device(slug: string) {
+    return this.http.get<GetDeviceResponse>('/api/device/get/' + slug).toPromise();
   }
 }

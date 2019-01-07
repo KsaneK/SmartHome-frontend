@@ -31,6 +31,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     'forgot-password': 2
   };
   private user_status_sub: Subscription;
+  private routeSubscription: Subscription;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -59,13 +60,14 @@ export class AccountComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.route.params.subscribe(params => {
+    this.routeSubscription = this.route.params.subscribe(params => {
       this.selectedIndex = this.forms[params['tab']];
     });
   }
 
   ngOnDestroy() {
     this.user_status_sub.unsubscribe();
+    this.routeSubscription.unsubscribe();
   }
 
   private update_route(tabChangeEvent: MatTabChangeEvent) {
@@ -75,7 +77,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
 
   private register_account() {
-    this.accountService.create_account(this.signUpForm).subscribe(response => {
+    this.accountService.create_account(this.signUpForm).then(response => {
       this.snackBar.open('Account created!', 'OK', {duration: 2000});
       return this.router.navigate(['/home']);
     }, err => {
@@ -92,7 +94,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   private login() {
-    this.accountService.login(this.loginForm).subscribe(response => {
+    this.accountService.login(this.loginForm).then(response => {
       if (response.status === 'authenticated') {
         this.snackBar.open('Logged in!', 'OK', {duration: 2000});
         return this.router.navigate(['/home']);
@@ -100,7 +102,7 @@ export class AccountComponent implements OnInit, OnDestroy {
         this.loginError = response.error;
       }
     }, err => {
-      if (err.status === 404) {
+      if (err.status === 504) {
         this.loginError = 'Service is unavailable.';
       } else {
         console.log(err);

@@ -12,7 +12,8 @@
 }
 
 .row {
-  display: flex;
+  /*display: flex;*/
+  display: block;
   flex-wrap: wrap;
   /*flex-direction: row;*/
   /*width:100%;*/
@@ -78,4 +79,16 @@ mat-card-subtitle {
 .card-sensor-text {
   font-size: 22px;
   color: black;
+}
+
+.device-show {
+  float: right;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }

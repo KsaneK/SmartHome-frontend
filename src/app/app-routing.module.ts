@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { AccountComponent } from './account/account.component';
 import { ProfileComponent } from './profile/profile.component';
 import { DeviceComponent } from './device/device.component';
+import { DevicePageComponent } from './device-page/device-page.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -13,7 +14,7 @@ const routes: Routes = [
   {path: 'profile', component: ProfileComponent},
   {path: 'profile/:tab', component: ProfileComponent},
   {path: 'devices', component: DeviceComponent},
-  {path: 'device/add', component: DeviceComponent},
+  {path: 'device/:slug', component: DevicePageComponent},
   {path: 'device/:name', component: DeviceComponent},
 ];
 

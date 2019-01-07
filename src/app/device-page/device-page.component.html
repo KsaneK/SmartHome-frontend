@@ -1,0 +1,45 @@
+<div id="device-container" *ngIf="device">
+  <button mat-button color="primary" class="back-button" (click)="router.navigate(['/devices'])">
+    <i class="fa-2x fas fa-arrow-alt-circle-left"></i> Back
+  </button>
+  <mat-card id="device-card">
+    <i class="fa-10x {{ device.type.icon }}" id="device-icon"></i>
+    <mat-card-title>
+      <h2>{{ device.name }}</h2>
+    </mat-card-title>
+    <div [ngSwitch]="device.mainCapability.component" class="capability">
+      <i class="fa-2x {{ device.mainCapability.icon }}"></i> {{ device.mainCapability.label }}
+      <button mat-stroked-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+device.mainCapability.name)">
+        {{ mqtt_topic }}/{{ device.mainCapability.name }}
+      </button>
+      <div class="card-component">
+        <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, device.mainCapability.name)"
+          [checked]="capability_values.get(device.mainCapability.name)"></mat-slide-toggle>
+        <mat-slider thumbLabel *ngSwitchCase="'slider'" min="1" max="100" step="1" tickInterval="1"
+                    color="primary" [value]="capability_values.get(device.mainCapability.name)"></mat-slider>
+        <span *ngSwitchCase="'text'" class="card-sensor-text">
+          {{ capability_values.get(device.mainCapability.name) }}
+        </span>
+      </div>
+    </div>
+    <mat-card-content id="container">
+      <div class="capability" *ngFor="let cap of device.capabilities">
+        <i class="fa-2x {{ cap.icon }}"></i> {{ cap.label }}
+        <button mat-stroked-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+cap.name)">
+          {{ mqtt_topic }}/{{ cap.name }}
+        </button>
+        <div [ngSwitch]="cap.component">
+          <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, cap.name)"
+                            [checked]="capability_values.get(cap.name)"></mat-slide-toggle>
+          <mat-slider thumbLabel *ngSwitchCase="'slider'" min="1" max="100" step="1" tickInterval="1"
+                      color="primary" [value]="capability_values.get(cap.name)">
+          </mat-slider>
+          <span *ngSwitchCase="'text'" class="card-sensor-text">
+            {{ capability_values.get(cap.name) }}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

@@ -16,17 +16,17 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
-  public create_account(form: FormGroup): Observable<SignUpResponse> {
+  public create_account(form: FormGroup): Promise<SignUpResponse> {
     const params = new HttpParams()
       .set('username', form.value.username)
       .set('password1', form.value.password1)
       .set('password2', form.value.password2)
       .set('email', form.value.email);
-    return this.http.post<SignUpResponse>('/api/account/create', params);
+    return this.http.post<SignUpResponse>('/api/account/create', params).toPromise();
   }
 
   public refresh_user_status(): void {
-    this.http.get<UserStatus>('/api/account/status').subscribe(status => {
+    this.http.get<UserStatus>('/api/account/status').toPromise().then(status => {
       this.user_subject.next(status);
       if (status.status === 'authenticated') {
         this.username = status.username;
@@ -46,11 +46,11 @@ export class AccountService {
     return this.user_subject.asObservable();
   }
 
-  public login(loginForm: FormGroup) {
+  public login(loginForm: FormGroup): Promise<LoginResponse> {
     const params = new HttpParams()
       .set('username', loginForm.value.username)
       .set('password', loginForm.value.password);
-    return this.http.post<LoginResponse>('/api/account/login', params);
+    return this.http.post<LoginResponse>('/api/account/login', params).toPromise();
   }
 
   public get_username(): string {
