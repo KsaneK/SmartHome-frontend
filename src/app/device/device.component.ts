@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { CapabilityIcon, ICON_LIST } from './device.icons';
 import { Capability } from '../interfaces/capability';
 import { DeviceType } from '../interfaces/device-type';
-import { MatSelectChange, MatSlideToggleChange, MatSnackBar } from '@angular/material';
+import { MatSelectChange, MatSliderChange, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { Device } from '../interfaces/device';
 import { Subscription } from 'rxjs';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -147,5 +147,10 @@ export class DeviceComponent implements OnInit, OnDestroy {
     this._mqttService.publish(topic, String(event.checked)).toPromise().then(res => {
       console.log(res);
     });
+  }
+
+  pub_slider(event: MatSliderChange, device: string, capability: string) {
+    const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
+    console.log(event.value);
   }
 }

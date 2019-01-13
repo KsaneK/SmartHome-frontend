@@ -5,7 +5,7 @@ import { AccountService } from '../services/account.service';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { Device } from '../interfaces/device';
-import { MatSlideToggleChange, MatSnackBar } from '@angular/material';
+import { MatSliderChange, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-device-page',
@@ -85,6 +85,14 @@ export class DevicePageComponent implements OnInit, OnDestroy {
   pub_switch(event: MatSlideToggleChange, capability: string) {
     console.log(this.mqtt_topic + '/' + capability);
     this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.checked)).toPromise().then(res =>{
+      console.log(res);
+    });
+  }
+
+  pub_slider(event: MatSliderChange, capability: string) {
+    console.log(this.mqtt_topic + '/' + capability);
+    console.log(event.value);
+    this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.value)).toPromise().then(res =>{
       console.log(res);
     });
   }
