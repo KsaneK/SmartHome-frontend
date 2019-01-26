@@ -10,7 +10,7 @@ import { MatSliderChange, MatSlideToggleChange, MatSnackBar } from '@angular/mat
 @Component({
   selector: 'app-device-page',
   templateUrl: './device-page.component.html',
-  styleUrls: ['./device-page.component.css']
+  styleUrls: ['./device-page.component.scss']
 })
 export class DevicePageComponent implements OnInit, OnDestroy {
   private user_status_sub: Subscription;
@@ -37,18 +37,21 @@ export class DevicePageComponent implements OnInit, OnDestroy {
     this.slug = this.route.snapshot.params['slug'];
     this.deviceService.get_device(this.slug).then(dev_response => {
       this.capability_values = new Map();
-      for (const cap of dev_response.device.capabilities) {
-        this.capability_values[cap.name] = null;
+      this.capability_values.set(dev_response.mainCapability.name, dev_response.mainCapability.last_value);
+      for (const cap of dev_response.capabilities) {
+        this.capability_values.set(cap.name, cap.last_value);
       }
-      this.device = dev_response.device;
+      this.device = dev_response;
       this.mqtt_topic = '/' + this.accountService.get_username() + '/' + this.device.slug;
       this.subscribe_capabilities();
+    }, err => {
+      this.snackBar.open('Device not found!', 'OK', {duration: 1000});
     });
   }
 
   ngOnDestroy(): void {
     this.user_status_sub.unsubscribe();
-    this.subscription.unsubscribe();
+    if (this.subscription) { this.subscription.unsubscribe(); }
   }
 
   private copyToClipboard(text: string) {

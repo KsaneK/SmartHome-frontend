@@ -26,4 +26,5 @@ export const ICON_LIST: CapabilityIcon[] = [
   {label: 'Sun',         class: 'fas fa-sun'},
   {label: 'Thermometer', class: 'fas fa-thermometer-half'},
   {label: 'Volume',      class: 'fas fa-volume-up'},
+  {label: 'Angle right', class: 'fas fa-angle-double-right'}
 ];

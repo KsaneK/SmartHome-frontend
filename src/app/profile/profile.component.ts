@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private user_status_sub: Subscription;

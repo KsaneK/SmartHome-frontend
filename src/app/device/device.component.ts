@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { CapabilityIcon, ICON_LIST } from './device.icons';
 import { Capability } from '../interfaces/capability';
 import { DeviceType } from '../interfaces/device-type';
-import { MatSelectChange, MatSliderChange, MatSlideToggleChange, MatSnackBar } from '@angular/material';
+import { MatSliderChange, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { Device } from '../interfaces/device';
 import { Subscription } from 'rxjs';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -14,7 +14,7 @@ import { IMqttMessage, MqttService } from 'ngx-mqtt';
 @Component({
   selector: 'app-device',
   templateUrl: './device.component.html',
-  styleUrls: ['./device.component.css']
+  styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent implements OnInit, OnDestroy {
   private user_status_sub: Subscription;
@@ -47,6 +47,8 @@ export class DeviceComponent implements OnInit, OnDestroy {
         console.log('/' + this.accountService.get_username() + '/#');
         this.subscription = this._mqttService.observe('/' + this.accountService.get_username() + '/#')
           .subscribe((message: IMqttMessage) => {
+            console.log('subscription event!');
+            console.log(message);
             const args: string[] = message.topic.split('/');
             const cap_slug: string = args[args.length - 2];
             let value;
@@ -57,7 +59,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
               value = parseInt(message.payload.toString(), 10);
             }
             if (this.capability_values.has(cap_slug)) {
-              console.log('Updated ' + cap_slug + ' component');
+              console.log('Updated ' + cap_slug + ' component - value=' + value);
               this.capability_values.set(cap_slug, value);
             }
           });
@@ -96,14 +98,18 @@ export class DeviceComponent implements OnInit, OnDestroy {
 
   private addDevice(): void {
     this.deviceService.add_device(this.addDeviceFormGroup).then(response => {
-      if (response.status === 'success') {
-        this.snackBar.open('Device created!', 'OK', {duration: 2000});
-        return this.router.navigate(['/device/' + response.name]);
-      } else {
-        this.errorMessage = response.error;
-      }
+      this.snackBar.open('Device created!', 'OK', {duration: 2000});
+      console.log(response);
+      return this.router.navigate([`/device/${response.slug}`]);
     }, err => {
-      this.errorMessage = 'Service is unavailable';
+      console.log(err);
+      if (err.status === 400) {
+        this.snackBar.open('Input structure is invalid', 'OK', {duration: 2000});
+      } else if (err.status === 404) {
+        this.snackBar.open('Service is not available', 'OK', {duration: 2000});
+      } else if (err.status === 406) {
+        this.snackBar.open('You already have device with this name', 'OK', {duration: 2000});
+      }
     });
   }
 
@@ -122,7 +128,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
   private loadMyDevices(): void {
     this.deviceService.get_my_devices().then(response => {
       for (const dev of response) {
-        this.capability_values.set(dev.slug, null);
+        this.capability_values.set(dev.slug, dev.mainCapability.last_value);
       }
       this.devices = response;
     });
@@ -144,7 +150,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
   pub_switch(event: MatSlideToggleChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
     console.log(topic);
-    this._mqttService.publish(topic, String(event.checked)).toPromise().then(res => {
+    this._mqttService.publish(topic, String(event.checked.valueOf() ? 1 : 0)).toPromise().then(res => {
       console.log(res);
     });
   }
@@ -152,5 +158,8 @@ export class DeviceComponent implements OnInit, OnDestroy {
   pub_slider(event: MatSliderChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
     console.log(event.value);
+    this._mqttService.publish(topic, String(event.value)).toPromise().then(res => {
+      console.log(res);
+    });
   }
 }

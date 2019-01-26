@@ -5,4 +5,5 @@ export interface Capability {
   component: string;
   icon: string;
   label: string;
+  last_value: Number;
 }

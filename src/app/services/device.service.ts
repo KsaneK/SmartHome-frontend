@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
-import { AddDeviceResponse } from '../interfaces/add-device-response';
 import { Capability } from '../interfaces/capability';
 import { DeviceType } from '../interfaces/device-type';
 import { Device } from '../interfaces/device';
-import { GetDeviceResponse } from '../interfaces/get-device-response';
+import { DeviceAction } from '../interfaces/device-action';
+import { AddDeviceResponse } from '../interfaces/add-device-response';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +24,7 @@ export class DeviceService {
     });
     console.log(formData);
 
-    const headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
     return this.http.post<AddDeviceResponse>('/api/device/add', formData, {headers: headers}).toPromise();
   }
 
@@ -42,6 +41,26 @@ export class DeviceService {
   }
 
   public get_device(slug: string) {
-    return this.http.get<GetDeviceResponse>('/api/device/get/' + slug).toPromise();
+    return this.http.get<Device>('/api/device/get/' + slug).toPromise();
+  }
+
+  public add_action(deviceAction: DeviceAction): Promise<Object> {
+    console.log(deviceAction);
+    const requestData = {
+      condition_device: deviceAction.condition_device,
+      condition_capability: deviceAction.condition_capability.name,
+      condition: deviceAction.condition,
+      condition_value: deviceAction.condition_value,
+      action_device: deviceAction.action_device,
+      action_capability: deviceAction.action_capability.name,
+      action_value: deviceAction.action_capability_value
+    };
+    console.log(requestData);
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.post<Response>('/api/device/add_action', JSON.stringify(requestData), {headers: headers}).toPromise();
+  }
+
+  public get_actions(): Promise<DeviceAction[]> {
+    return this.http.get<DeviceAction[]>('/api/device/get_actions').toPromise();
   }
 }

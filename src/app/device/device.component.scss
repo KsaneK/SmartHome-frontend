@@ -1,3 +1,13 @@
+@import "~@angular/material/theming";
+
+.icon-on {
+  color: mat-color(mat-palette($mat-green, 600));
+}
+
+.icon-off {
+  color: mat-color(mat-palette($mat-red, 600));
+}
+
 .display-table {
   display: table;
 }
@@ -40,14 +50,9 @@
   margin-top: 10px;
 }
 
-.mat-card {
-  color: red;
-  margin-top: 10px;
-}
 
 .device-card {
   width: 300px;
-  color: black;
   margin: 30px;
 }
 
@@ -78,7 +83,6 @@ mat-card-subtitle {
 
 .card-sensor-text {
   font-size: 22px;
-  color: black;
 }
 
 .device-show {

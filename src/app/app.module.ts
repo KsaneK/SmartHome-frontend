@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavComponent } from './nav/nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
@@ -18,6 +17,7 @@ import { DeviceComponent } from './device/device.component';
 import { DeviceService } from './services/device.service';
 import { DevicePageComponent } from './device-page/device-page.component';
 import { AngularFullpageModule } from '@fullpage/angular-fullpage';
+import { ActionComponent } from './action/action.component';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
@@ -30,12 +30,12 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 @NgModule({
   declarations: [
     AppComponent,
-    NavComponent,
     HomeComponent,
     AccountComponent,
     ProfileComponent,
     DeviceComponent,
-    DevicePageComponent
+    DevicePageComponent,
+    ActionComponent
   ],
   imports: [
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),

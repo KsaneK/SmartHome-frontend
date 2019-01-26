@@ -97,16 +97,21 @@
         <div class="card-info">
           <mat-card-title>{{ dev.name }}</mat-card-title>
           <mat-card-subtitle [ngSwitch]="dev.mainCapability.component">
-            <i class="{{ dev.mainCapability.icon }}"></i> {{ dev.mainCapability.label }}<br>
+            <i *ngIf="dev.mainCapability.component != 'icon'" class="{{ dev.mainCapability.icon }}"></i>
+            {{ dev.mainCapability.label }}<br>
             <div class="card-component">
               <mat-slide-toggle (change)="pub_switch($event, dev.slug, dev.mainCapability.name)" *ngSwitchCase="'switch'"
-                                [checked]="capability_values.get(dev.name)"
+                                [checked]="capability_values.get(dev.slug) === 1"
                                 color="primary"></mat-slide-toggle>
               <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
-                          color="primary" [value]="capability_values.get(dev.name)"
+                          color="primary" [value]="capability_values.get(dev.slug)"
                           (change)="pub_slider($event, dev.slug, dev.mainCapability.name)">
               </mat-slider>
               <span *ngSwitchCase="'text'" class="card-sensor-text">{{capability_values.get(dev.slug)}}</span>
+              <span *ngSwitchCase="'icon'">
+                <i class="{{ dev.mainCapability.icon }} fa-3x
+                          {{ capability_values.get(dev.slug) === 1 ? 'icon-on' : 'icon-off' }}"></i>
+              </span>
             </div>
           </mat-card-subtitle>
         </div>

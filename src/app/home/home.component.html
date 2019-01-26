@@ -1,4 +1,4 @@
-<div fullpage id="fullpage" [options]="config" (ref)="getRef($event)" #fullpageRef>
+<div *ngIf="status === 'not_authenticated'" fullpage id="fullpage" [options]="config" (ref)="getRef($event)" #fullpageRef>
   <div class="section">
     <h2>SmartHome</h2>
     <h6>The easiest way to control your home</h6>
@@ -30,4 +30,17 @@
     <h3>Control devices</h3>
     <img src="../../assets/img/control_device.bmp" alt="Control Device Image">
   </div>
+</div>
+<div *ngIf="status === 'authenticated'" id="board-container">
+  <mat-card *ngIf="airQuality" class="home-card">
+    <mat-card-title><h2>Air quality</h2></mat-card-title>
+    <mat-card-subtitle><h4>{{ airQuality.city }}</h4></mat-card-subtitle>
+    <mat-card-content><h2 [style.color]="airQuality.bgcolor">{{ airQuality.text }}</h2></mat-card-content>
+    <mat-card-footer><h5>Air Quality Index: {{ airQuality.aqi }}</h5></mat-card-footer>
+  </mat-card>
+  <mat-card *ngIf="currentWeather" class="home-card" [style.background]="currentWeather.bgcolor">
+    <mat-card-title><h2>Air quality</h2></mat-card-title>
+    <mat-card-subtitle><h3>{{ currentWeather.city }}</h3></mat-card-subtitle>
+    <mat-card-content>{{ currentWeather.text }}</mat-card-content>
+  </mat-card>
 </div>
