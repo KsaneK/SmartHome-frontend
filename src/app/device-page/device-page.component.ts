@@ -87,9 +87,10 @@ export class DevicePageComponent implements OnInit, OnDestroy {
 
   pub_switch(event: MatSlideToggleChange, capability: string) {
     console.log(this.mqtt_topic + '/' + capability);
-    this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.checked)).toPromise().then(res =>{
-      console.log(res);
-    });
+    this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.checked.valueOf() ? 1 : 0)).toPromise()
+      .then(res => {
+        console.log(res);
+      });
   }
 
   pub_slider(event: MatSliderChange, capability: string) {

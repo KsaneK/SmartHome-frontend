@@ -45,16 +45,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.thirdPartyService.getAirQualityIndex().then(q => {
           this.airQuality = q;
         });
+      } else {
+        document.getElementsByClassName('mat-sidenav-content').item(0)
+          .setAttribute('style', 'overflow: hidden;');
       }
     });
-    document.getElementsByClassName('mat-sidenav-content').item(0)
-      .setAttribute('style', 'overflow: hidden;');
   }
 
   ngOnDestroy(): void {
     this.user_sub.unsubscribe();
     document.getElementsByClassName('mat-sidenav-content').item(0)
-      .setAttribute('style', 'overflow: scroll;');
+      .setAttribute('style', 'overflow: auto;');
   }
 
 }

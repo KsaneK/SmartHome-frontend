@@ -67,7 +67,7 @@
     <mat-form-field *ngIf="!isActionBinary">
       <input matInput type="number" placeholder="Value" (change)="selectActionValue($event.srcElement.value)">
     </mat-form-field>
-    <button mat-button (click)="addDeviceAction()">Add action!</button>
+    <button mat-raised-button (click)="addDeviceAction()">Add action!</button>
   </div>
   <div id="actions" *ngIf="deviceActions">
     <h1 style="width: 100%; text-align: center;">Device actions</h1>
@@ -95,8 +95,12 @@
         <mat-grid-tile *ngIf="['switch', 'icon'].indexOf(action.action_capability.component) == -1">
           {{ action.action_capability_value }}
         </mat-grid-tile>
-        <mat-grid-tile><mat-checkbox></mat-checkbox></mat-grid-tile>
-        <mat-grid-tile><mat-icon>delete</mat-icon></mat-grid-tile>
+        <mat-grid-tile>
+          <mat-checkbox [checked]="action.notify" value="{{ action.id }}" (change)="updateNotify($event)"></mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-icon (click)="deleteAction(action.id)" style="cursor: pointer">delete</mat-icon>
+        </mat-grid-tile>
       </span>
     </mat-grid-list>
   </div>

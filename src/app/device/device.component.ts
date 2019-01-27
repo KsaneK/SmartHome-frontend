@@ -147,7 +147,16 @@ export class DeviceComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  pub_switch(event: MatSlideToggleChange, device: string, capability: string) {
+  private deleteDevice(id: number) {
+    this.deviceService.delete_device(id).then(response => {
+      this.devices = this.devices.filter(d => d.id !== id);
+      this.snackBar.open('Device deleted!', 'OK', {duration: 2000});
+    }, err => {
+      this.snackBar.open('Error while deleting device', 'OK', {duration: 2000});
+    });
+  }
+
+  private pub_switch(event: MatSlideToggleChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
     console.log(topic);
     this._mqttService.publish(topic, String(event.checked.valueOf() ? 1 : 0)).toPromise().then(res => {
@@ -155,7 +164,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
     });
   }
 
-  pub_slider(event: MatSliderChange, device: string, capability: string) {
+  private pub_slider(event: MatSliderChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
     console.log(event.value);
     this._mqttService.publish(topic, String(event.value)).toPromise().then(res => {

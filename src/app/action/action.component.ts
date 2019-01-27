@@ -4,7 +4,7 @@ import { AccountService } from '../services/account.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { Device } from '../interfaces/device';
-import { MatSnackBar } from '@angular/material';
+import { MatCheckboxChange, MatSnackBar } from '@angular/material';
 import { Capability } from '../interfaces/capability';
 import { DeviceAction } from '../interfaces/device-action';
 import strToSignMap from './maps';
@@ -112,6 +112,7 @@ export class ActionComponent implements OnInit, OnDestroy {
     this.deviceService.add_action(this.newAction).then(response => {
       this.snackBar.open('Action created!', 'OK', {duration: 2000});
       this.deviceActions.push(<DeviceAction>{
+        id: response['action_id'],
         action_device: this.newAction.action_device,
         condition_device: this.newAction.condition_device,
         condition_value: this.newAction.condition_value,
@@ -140,5 +141,23 @@ export class ActionComponent implements OnInit, OnDestroy {
       name: capability.name,
       icon: capability.icon
     };
+  }
+
+  private updateNotify(event: MatCheckboxChange) {
+    this.deviceService.update_action_notify(parseInt(event.source.value, 10), event.checked).then(r => {
+      this.snackBar.open('Updated notification setting.', 'OK', {duration: 2000});
+    }, err => {
+      this.snackBar.open('Couldn\'t update notification setting.', 'OK', {duration: 2000});
+    });
+    console.log(event);
+  }
+
+  private deleteAction(id: number) {
+    this.deviceService.delete_action(id).then(r => {
+      this.deviceActions = this.deviceActions.filter(a => a.id !== id);
+      this.snackBar.open('Deleted.', 'OK', {duration: 2000});
+    }, err => {
+      this.snackBar.open('Error while deleting action.', 'OK', {duration: 2000});
+    });
   }
 }

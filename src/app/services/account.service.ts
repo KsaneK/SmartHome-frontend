@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormGroup } from '@angular/forms';
 import { SignUpResponse } from '../interfaces/sign-up-response';
 import { Observable } from 'rxjs/internal/Observable';
@@ -55,5 +55,49 @@ export class AccountService {
 
   public get_username(): string {
     return this.username;
+  }
+
+  public get_email() {
+    return this.http.get('/api/account/email').toPromise();
+  }
+
+  public get_telegram_config() {
+    return this.http.get('/api/account/telegram_config/get').toPromise();
+  }
+
+  public put_telegram_token(token) {
+    const formData = JSON.stringify({
+      token: token
+    });
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.put('/api/account/telegram_token/put', formData, {headers: headers}).toPromise();
+  }
+
+  public connect_telegram() {
+    return this.http.get('/api/account/telegram_connect').toPromise();
+  }
+
+  public update_email(email) {
+    const formData = JSON.stringify({
+      email: email
+    });
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.put('/api/account/email/put', formData, {headers: headers}).toPromise();
+  }
+
+  public update_telegram_notification(notify: any) {
+    const formData = JSON.stringify({
+      notify: notify
+    });
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.put('api/account/telegram_notification/put', formData, {headers: headers}).toPromise();
+  }
+
+  public update_email_notification(notify: any) {
+    const formData = JSON.stringify({
+      notify: notify
+    });
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.put('api/account/email_notification/put', formData, {headers: headers}).toPromise();
   }
 }

@@ -63,4 +63,21 @@ export class DeviceService {
   public get_actions(): Promise<DeviceAction[]> {
     return this.http.get<DeviceAction[]>('/api/device/get_actions').toPromise();
   }
+
+  public update_action_notify(action_id: number, notify: boolean) {
+    const requestData = {
+      action_id: action_id,
+      notify: notify,
+    };
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.put('api/device/action_notify/put', requestData, {headers: headers}).toPromise();
+  }
+
+  public delete_action(id: number) {
+    return this.http.delete('api/device/delete_action/' + id).toPromise();
+  }
+
+  public delete_device(id: number) {
+    return this.http.delete('/api/device/delete/' + id).toPromise();
+  }
 }

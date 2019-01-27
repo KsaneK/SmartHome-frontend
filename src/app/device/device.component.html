@@ -117,8 +117,11 @@
         </div>
         <div class="device-show">
           <button mat-flat-button color="primary">
-            <a mat-list-item routerLink="/device/{{dev.slug}}">show</a>
+            <a mat-list-item routerLink="/device/{{ dev.slug }}">show</a>
           </button>
+        </div>
+        <div class="device-delete">
+          <i class="fas fa-trash fa-2x" (click)="deleteDevice(dev.id)"></i>
         </div>
       </mat-card-content>
     </mat-card>
