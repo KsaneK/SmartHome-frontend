@@ -18,6 +18,7 @@ import { DeviceService } from './services/device.service';
 import { DevicePageComponent } from './device-page/device-page.component';
 import { AngularFullpageModule } from '@fullpage/angular-fullpage';
 import { ActionComponent } from './action/action.component';
+import { ChartComponent } from './chart/chart.component';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
@@ -35,7 +36,8 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
     ProfileComponent,
     DeviceComponent,
     DevicePageComponent,
-    ActionComponent
+    ActionComponent,
+    ChartComponent
   ],
   imports: [
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),

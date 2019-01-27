@@ -6,6 +6,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePageComponent } from './device-page/device-page.component';
 import { ActionComponent } from './action/action.component';
+import { ChartComponent } from './chart/chart.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -18,6 +19,7 @@ const routes: Routes = [
   {path: 'device/:slug', component: DevicePageComponent},
   {path: 'device/:name', component: DeviceComponent},
   {path: 'actions', component: ActionComponent},
+  {path: 'chart/:device/:capability', component: ChartComponent},
 ];
 
 @NgModule({

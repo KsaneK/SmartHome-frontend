@@ -9,10 +9,14 @@
     </mat-card-title>
     <div [ngSwitch]="device.mainCapability.component" class="capability">
       <h2>
-        <i *ngIf="device.mainCapability.component != 'icon'" class="fa-2x {{ device.mainCapability.icon }}"></i>
+        <i *ngIf="device.mainCapability.component != 'icon'" class="{{ device.mainCapability.icon }}"></i>
         {{ device.mainCapability.label }}
         <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+device.mainCapability.name)">
           {{ mqtt_topic }}/{{ device.mainCapability.name }}
+        </button>
+        <button mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.slug }}/{{ device.mainCapability.name }}">
+          chart
         </button>
       </h2>
 
@@ -37,6 +41,10 @@
         <i *ngIf="cap.component != 'icon'" class="fa-2x {{ cap.icon }}"></i> {{ cap.label }}
         <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+cap.name)">
           {{ mqtt_topic }}/{{ cap.name }}
+        </button>
+        <button mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.slug }}/{{ cap.name }}">
+          chart
         </button>
         <div [ngSwitch]="cap.component">
           <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, cap.name)"

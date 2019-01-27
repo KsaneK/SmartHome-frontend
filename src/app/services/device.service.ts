@@ -6,6 +6,7 @@ import { DeviceType } from '../interfaces/device-type';
 import { Device } from '../interfaces/device';
 import { DeviceAction } from '../interfaces/device-action';
 import { AddDeviceResponse } from '../interfaces/add-device-response';
+import { DeviceHistoryResponse } from '../interfaces/device-history-response';
 
 @Injectable({
   providedIn: 'root'
@@ -80,4 +81,9 @@ export class DeviceService {
   public delete_device(id: number) {
     return this.http.delete('/api/device/delete/' + id).toPromise();
   }
+
+  public get_historical_data(device: string, capability: string): Promise<DeviceHistoryResponse[]> {
+    return this.http.get<DeviceHistoryResponse[]>('/api/device/historical/' + device + '/' + capability).toPromise();
+  }
+
 }
