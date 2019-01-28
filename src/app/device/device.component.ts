@@ -52,16 +52,9 @@ export class DeviceComponent implements OnInit, OnDestroy {
             const args: string[] = message.topic.split('/');
             const cap_slug: string = args[args.length - 2];
             let value;
-            value = message.payload.toString();
-            if (['false', 'true'].indexOf(message.payload.toString()) > -1) {
-              value = 'true' === message.payload.toString();
-            } else if (!isNaN(value)) {
-              value = parseInt(message.payload.toString(), 10);
-            }
-            if (this.capability_values.has(cap_slug)) {
-              console.log('Updated ' + cap_slug + ' component - value=' + value);
-              this.capability_values.set(cap_slug, value);
-            }
+            value = parseInt(message.payload.toString(), 10);
+            console.log('Updated ' + cap_slug + ' component - value=' + value);
+            this.capability_values.set(cap_slug, value);
           });
       }
     });

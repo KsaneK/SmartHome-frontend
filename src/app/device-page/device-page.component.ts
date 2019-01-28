@@ -72,16 +72,13 @@ export class DevicePageComponent implements OnInit, OnDestroy {
   private subscribe_capabilities() {
     console.log('subscribe'); console.log(this.mqtt_topic);
     this.subscription = this._mqttService.observe(this.mqtt_topic + '/#').subscribe((message: IMqttMessage) => {
+      console.log('Received message ' + message.payload.toString() + ' from ' + message.topic);
       const args: string[] = message.topic.split('/');
       const cap_slug: string = args[args.length - 1];
-      let value;
-      value = message.payload.toString();
-      if (['false', 'true'].indexOf(message.payload.toString()) > -1) {
-        value = 'true' === message.payload.toString();
-      } else if (!isNaN(value)) {
-        value = parseInt(message.payload.toString(), 10);
+      const value = parseInt(message.payload.toString(), 10);
+      if (this.capability_values.get(cap_slug) !== value) {
+        this.capability_values.set(cap_slug, value);
       }
-      this.capability_values.set(cap_slug, value);
     });
   }
 
@@ -89,14 +86,14 @@ export class DevicePageComponent implements OnInit, OnDestroy {
     console.log(this.mqtt_topic + '/' + capability);
     this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.checked.valueOf() ? 1 : 0)).toPromise()
       .then(res => {
-        console.log(res);
+        console.log('Published ' + event.checked.valueOf() + ' to ' + this.mqtt_topic + '/' + capability);
       });
   }
 
   pub_slider(event: MatSliderChange, capability: string) {
     console.log(this.mqtt_topic + '/' + capability);
     console.log(event.value);
-    this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.value)).toPromise().then(res =>{
+    this._mqttService.publish(this.mqtt_topic + '/' + capability, String(event.value)).toPromise().then(res => {
       console.log(res);
     });
   }

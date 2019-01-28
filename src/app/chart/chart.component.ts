@@ -1,24 +1,38 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DeviceHistoryResponse } from '../interfaces/device-history-response';
 import { Chart } from 'chart.js';
 import { DeviceService } from '../services/device.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AccountService } from '../services/account.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss']
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent implements OnInit, OnDestroy {
 
   private chart: Chart;
   private device: string;
   private capability: string;
+  private user_status_sub: Subscription;
+  private dates: string[];
+  private values: number[];
 
   constructor(private deviceSerice: DeviceService,
-              private route: ActivatedRoute) { }
+              private accountService: AccountService,
+              private route: ActivatedRoute,
+              private router: Router) { }
 
   ngOnInit() {
+    this.accountService.refresh_user_status();
+    this.user_status_sub = this.accountService.get_user_status().subscribe(res => {
+      if (res && res.status !== 'authenticated') {
+        this.router.navigate(['/account/login']);
+      }
+    });
+
     let response: DeviceHistoryResponse[];
     this.route.params.subscribe(params => {
       this.device = params['device'];
@@ -26,16 +40,16 @@ export class ChartComponent implements OnInit {
     });
     this.deviceSerice.get_historical_data(this.device, this.capability).then(r => {
       response = r;
-      const dates: string[] = response.map(data => data.date.toString());
-      const values: number[] = response.map(data => data.value);
+      this.dates = response.map(data => data.date.toString());
+      this.values = response.map(data => data.value);
 
       this.chart = new Chart('chart-canvas', {
         type: 'line',
         data: {
-          labels: dates,
+          labels: this.dates,
           datasets: [
             {
-              data: values,
+              data: this.values,
               borderColor: '#D8C9FD',
               fill: false
             },
@@ -62,5 +76,7 @@ export class ChartComponent implements OnInit {
     });
   }
 
-
+  ngOnDestroy(): void {
+    this.user_status_sub.unsubscribe();
+  }
 }
