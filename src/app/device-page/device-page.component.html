@@ -22,7 +22,7 @@
 
       <div class="card-component">
         <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, device.mainCapability.name)"
-          [checked]="capability_values.get(device.mainCapability.name)"></mat-slide-toggle>
+          [checked]="capability_values.get(device.mainCapability.name) === 1"></mat-slide-toggle>
         <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
                     (change)="pub_slider($event, device.mainCapability.name)"
                     color="primary" [value]="capability_values.get(device.mainCapability.name)"></mat-slider>

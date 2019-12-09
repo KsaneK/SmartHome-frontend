@@ -1,4 +1,4 @@
-<div *ngIf="status === 'not_authenticated'" fullpage id="fullpage" [options]="config" (ref)="getRef($event)" #fullpageRef>
+<div *ngIf="!airQuality" fullpage id="fullpage" [options]="config" (ref)="getRef($event)" #fullpageRef>
   <div class="section">
     <h2>SmartHome</h2>
     <h6>The easiest way to control your home</h6>
@@ -31,16 +31,18 @@
     <img src="../../assets/img/control_device.bmp" alt="Control Device Image">
   </div>
 </div>
-<div *ngIf="status === 'authenticated'" id="board-container">
+<div *ngIf="airQuality" id="board-container">
   <mat-card *ngIf="airQuality" class="home-card">
     <mat-card-title><h2>Air quality</h2></mat-card-title>
     <mat-card-subtitle><h4>{{ airQuality.city }}</h4></mat-card-subtitle>
-    <mat-card-content><h2 [style.color]="airQuality.bgcolor">{{ airQuality.text }}</h2></mat-card-content>
-    <mat-card-footer><h5>Air Quality Index: {{ airQuality.aqi }}</h5></mat-card-footer>
+    <mat-card-content><h2 [style.color]="airQuality.color">{{ airQuality.text }}</h2></mat-card-content>
+    <mat-card-footer><h5 [style.color]="airQuality.color">Air quality index: {{ airQuality.aqi }}</h5></mat-card-footer>
   </mat-card>
-  <mat-card *ngIf="currentWeather" class="home-card" [style.background]="currentWeather.bgcolor">
-    <mat-card-title><h2>Air quality</h2></mat-card-title>
+  <mat-card *ngIf="currentWeather" class="home-card">
+    <mat-card-title><h2>Weather</h2></mat-card-title>
     <mat-card-subtitle><h3>{{ currentWeather.city }}</h3></mat-card-subtitle>
-    <mat-card-content>{{ currentWeather.text }}</mat-card-content>
+    <mat-card-content>{{ currentWeather.description }}</mat-card-content>
+    <mat-card-content>temperature: {{ currentWeather.temp }}°C</mat-card-content>
+    <mat-card-content>wind speed: {{ currentWeather.windSpeed }}m/s</mat-card-content>
   </mat-card>
 </div>

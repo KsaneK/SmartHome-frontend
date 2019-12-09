@@ -1,7 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountService } from './services/account.service';
-import { Subscription } from 'rxjs';
-import { UserStatus } from './interfaces/user-status';
+import {AccountService} from './services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -9,22 +7,21 @@ import { UserStatus } from './interfaces/user-status';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private user: UserStatus;
-  private subscription: Subscription;
+  accountService: AccountService;
 
-  constructor(private accountService: AccountService) {}
+  constructor(accountService: AccountService) {
+    this.accountService = accountService;
+  }
 
   title = 'smart-home';
   nightmode = false;
   public ngOnInit() {
-    this.accountService.refresh_user_status();
-    this.subscription = this.accountService.get_user_status().subscribe(status => {
-      this.user = status;
-    });
+    if (localStorage.getItem('username') && this.accountService.username == null) {
+      this.accountService.username = localStorage.getItem('username');
+    }
   }
 
   public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
 

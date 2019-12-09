@@ -2,9 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DeviceHistoryResponse } from '../interfaces/device-history-response';
 import { Chart } from 'chart.js';
 import { DeviceService } from '../services/device.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AccountService } from '../services/account.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chart',
@@ -16,23 +15,14 @@ export class ChartComponent implements OnInit, OnDestroy {
   private chart: Chart;
   private device: string;
   private capability: string;
-  private user_status_sub: Subscription;
   private dates: string[];
   private values: number[];
 
   constructor(private deviceSerice: DeviceService,
               private accountService: AccountService,
-              private route: ActivatedRoute,
-              private router: Router) { }
+              private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.accountService.refresh_user_status();
-    this.user_status_sub = this.accountService.get_user_status().subscribe(res => {
-      if (res && res.status !== 'authenticated') {
-        this.router.navigate(['/account/login']);
-      }
-    });
-
     let response: DeviceHistoryResponse[];
     this.route.params.subscribe(params => {
       this.device = params['device'];
@@ -41,6 +31,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.deviceSerice.get_historical_data(this.device, this.capability).then(r => {
       response = r;
       this.dates = response.map(data => data.date.toString());
+      console.log(this.dates);
       this.values = response.map(data => data.value);
 
       this.chart = new Chart('chart-canvas', {
@@ -51,7 +42,8 @@ export class ChartComponent implements OnInit, OnDestroy {
             {
               data: this.values,
               borderColor: '#D8C9FD',
-              fill: false
+              fill: false,
+              lineTension: 0.2
             },
           ]
         },
@@ -61,14 +53,21 @@ export class ChartComponent implements OnInit, OnDestroy {
           },
           scales: {
             xAxes: [{
-              display: true
+              display: true,
+              type: 'time',
+              time: {
+                parser: 'YYYY-MM-DD HH:mm:ss',
+                unit: 'second',
+                stepSize: 1,
+                tooltipFormat: 'll HH:mm:ss',
+              }
             }],
             yAxes: [{
               display: true,
               scaleLabel: {
                 display: true,
                 labelString: 'Value'
-              }
+              },
             }],
           }
         }
@@ -77,6 +76,5 @@ export class ChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.user_status_sub.unsubscribe();
   }
 }

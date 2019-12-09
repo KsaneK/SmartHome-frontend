@@ -1,6 +1,6 @@
 export interface AirQualityResponse {
   city: string;
-  bgcolor: string;
+  color: string;
   text: string;
   aqi: number;
 }

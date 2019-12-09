@@ -41,7 +41,6 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.accountService.refresh_user_status();
     this.signUpForm = this.formBuilder.group({
       username: ['', Validators.required],
       password1: ['', Validators.required],
@@ -54,19 +53,12 @@ export class AccountComponent implements OnInit, OnDestroy {
       password: ['', Validators.required]
     });
 
-    this.user_status_sub = this.accountService.get_user_status().subscribe(res => {
-      if (res && res.status === 'authenticated') {
-        this.router.navigate(['/home']);
-      }
-    });
-
     this.routeSubscription = this.route.params.subscribe(params => {
       this.selectedIndex = this.forms[params['tab']];
     });
   }
 
   ngOnDestroy() {
-    this.user_status_sub.unsubscribe();
     this.routeSubscription.unsubscribe();
   }
 
@@ -95,14 +87,12 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   private login() {
     this.accountService.login(this.loginForm).then(response => {
-      if (response.status === 'authenticated') {
-        this.snackBar.open('Logged in!', 'OK', {duration: 2000});
-        return this.router.navigate(['/home']);
-      } else {
-        this.loginError = response.error;
-      }
+      this.snackBar.open('Logged in!', 'OK', {duration: 2000});
+      return this.router.navigate(['/home']);
     }, err => {
-      if (err.status === 504) {
+      if (err.status === 403) {
+        this.loginError = 'Bad login or password.';
+      } else if (err.status === 504) {
         this.loginError = 'Service is unavailable.';
       } else {
         console.log(err);

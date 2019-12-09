@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  private user_status_sub: Subscription;
   private token_field: any;
   private email_field: any;
   private telegram_notification_field: any;
@@ -22,7 +21,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
               private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.accountService.refresh_user_status();
     this.route.params.subscribe(params => {
       if (params['tab'] === 'logout') {
         this.accountService.logout();
@@ -30,30 +28,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.router.navigate(['/home']);
       }
     });
-    this.user_status_sub = this.accountService.get_user_status().subscribe(user_status => {
-      if (user_status.status === 'not_authenticated') {
-        this.router.navigate(['/home']);
-      } else {
-        this.accountService.get_email().then(e => {
-          this.email_field = e['email'];
-          this.email_notification_field = e['notify'];
-        }, err => {
-          console.log('error while getting email.');
-          console.log(err);
-        });
-        this.accountService.get_telegram_config().then(e => {
-          this.token_field = e['token'];
-          this.telegram_notification_field = e['notify'];
-        }, err => {
-          console.log('error while getting token.');
-          console.log(err);
-        });
-      }
+    this.accountService.get_notification_config().then(config => {
+      this.email_field = config.email;
+      this.email_notification_field = config.emailNotification;
+      this.token_field = config.telegramToken;
+      this.telegram_notification_field = config.telegramNotification;
     });
   }
 
   ngOnDestroy() {
-    this.user_status_sub.unsubscribe();
   }
 
   updateToken() {

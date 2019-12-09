@@ -38,11 +38,11 @@ export class DeviceService {
   }
 
   public get_my_devices(): Promise<Device[]> {
-    return this.http.get<Device[]>('/api/device/get').toPromise();
+    return this.http.get<Device[]>('/api/device').toPromise();
   }
 
   public get_device(slug: string) {
-    return this.http.get<Device>('/api/device/get/' + slug).toPromise();
+    return this.http.get<Device>('/api/device/' + slug).toPromise();
   }
 
   public add_action(deviceAction: DeviceAction): Promise<Object> {
@@ -58,11 +58,11 @@ export class DeviceService {
     };
     console.log(requestData);
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
-    return this.http.post<Response>('/api/device/add_action', JSON.stringify(requestData), {headers: headers}).toPromise();
+    return this.http.post<Response>('/api/action', JSON.stringify(requestData), {headers: headers}).toPromise();
   }
 
   public get_actions(): Promise<DeviceAction[]> {
-    return this.http.get<DeviceAction[]>('/api/device/get_actions').toPromise();
+    return this.http.get<DeviceAction[]>('/api/action').toPromise();
   }
 
   public update_action_notify(action_id: number, notify: boolean) {
@@ -75,15 +75,23 @@ export class DeviceService {
   }
 
   public delete_action(id: number) {
-    return this.http.delete('api/device/delete_action/' + id).toPromise();
+    return this.http.delete('api/action/' + id).toPromise();
   }
 
   public delete_device(id: number) {
-    return this.http.delete('/api/device/delete/' + id).toPromise();
+    return this.http.delete('/api/device/' + id).toPromise();
   }
 
   public get_historical_data(device: string, capability: string): Promise<DeviceHistoryResponse[]> {
-    return this.http.get<DeviceHistoryResponse[]>('/api/device/historical/' + device + '/' + capability).toPromise();
+    return this.http.get<DeviceHistoryResponse[]>('/api/statushistory/dev/' + device + '/cap/' + capability).toPromise();
   }
 
+  public publish_status(topic: string, value: number) {
+    const requestData = {
+      'topic': topic,
+      'value': value
+    };
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.post('/api/statushistory', JSON.stringify(requestData), {headers: headers}).toPromise();
+  }
 }

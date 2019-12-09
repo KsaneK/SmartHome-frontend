@@ -7,19 +7,20 @@ import { DeviceComponent } from './device/device.component';
 import { DevicePageComponent } from './device-page/device-page.component';
 import { ActionComponent } from './action/action.component';
 import { ChartComponent } from './chart/chart.component';
+import {UserGuard} from './UserGuard';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'home', component: HomeComponent},
   {path: 'account', component: AccountComponent},
   {path: 'account/:tab', component: AccountComponent},
-  {path: 'profile', component: ProfileComponent},
-  {path: 'profile/:tab', component: ProfileComponent},
-  {path: 'devices', component: DeviceComponent},
-  {path: 'device/:slug', component: DevicePageComponent},
-  {path: 'device/:name', component: DeviceComponent},
-  {path: 'actions', component: ActionComponent},
-  {path: 'chart/:device/:capability', component: ChartComponent},
+  {path: 'profile', component: ProfileComponent, canActivate: [UserGuard]},
+  {path: 'profile/:tab', component: ProfileComponent, canActivate: [UserGuard]},
+  {path: 'devices', component: DeviceComponent, canActivate: [UserGuard]},
+  {path: 'device/:slug', component: DevicePageComponent, canActivate: [UserGuard]},
+  {path: 'device/:name', component: DeviceComponent, canActivate: [UserGuard]},
+  {path: 'actions', component: ActionComponent, canActivate: [UserGuard]},
+  {path: 'chart/:device/:capability', component: ChartComponent, canActivate: [UserGuard]},
 ];
 
 @NgModule({

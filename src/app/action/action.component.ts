@@ -15,7 +15,6 @@ import strToSignMap from './maps';
   styleUrls: ['./action.component.scss']
 })
 export class ActionComponent implements OnInit, OnDestroy {
-  private subscription: Subscription;
   // For add action section
   private devices: Device[];
   private capabilities: Capability[];
@@ -28,34 +27,25 @@ export class ActionComponent implements OnInit, OnDestroy {
   private deviceActions: DeviceAction[];
 
   constructor(private deviceService: DeviceService,
-              private accountService: AccountService,
-              private router: Router,
               public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.accountService.refresh_user_status();
-    this.subscription = this.accountService.get_user_status().subscribe( e => {
-      if (e.status !== 'authenticated') {
-        this.router.navigate(['/home']);
-      } else {
-        console.log('Getting devices');
-        this.deviceService.get_my_devices().then(r => {
-          this.devices = r;
-        }, err => {
-          this.snackBar.open('Couldn\'t load devices', 'OK', {duration: 2000});
-        });
-        console.log('Getting actions');
-        this.deviceService.get_actions().then(r => {
-          this.deviceActions = r;
-        }, err => {
-          this.snackBar.open('Couldn\'t load actions', 'OK', {duration: 2000});
-        });
-      }
-    });
+      console.log('Getting devices');
+      this.deviceService.get_my_devices().then(r => {
+        this.devices = r;
+        console.log(this.devices);
+      }, err => {
+        this.snackBar.open('Couldn\'t load devices', 'OK', {duration: 2000});
+      });
+      console.log('Getting actions');
+      this.deviceService.get_actions().then(r => {
+        this.deviceActions = r;
+      }, err => {
+        this.snackBar.open('Couldn\'t load actions', 'OK', {duration: 2000});
+      });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   private selectDevice(device: Device) {
@@ -88,8 +78,8 @@ export class ActionComponent implements OnInit, OnDestroy {
   private selectActionDevice(device: Device) {
     console.log(device);
     this.actionCapabilities = [];
-    if (device.mainCapability.type === 'set') { this.actionCapabilities.push(device.mainCapability); }
-    device.capabilities.filter(c => c.type === 'set')
+    if (['switch', 'slider'].indexOf(device.mainCapability.component) !== -1) { this.actionCapabilities.push(device.mainCapability); }
+    device.capabilities.filter(c => ['switch', 'slider'].indexOf(c.component) !== -1)
       .forEach(c => this.actionCapabilities.push(c));
     this.newAction.action_device = device.slug;
     this.newAction.action_capability = null;
@@ -109,10 +99,10 @@ export class ActionComponent implements OnInit, OnDestroy {
 
   private addDeviceAction() {
     console.log(JSON.stringify(this.newAction));
-    this.deviceService.add_action(this.newAction).then(response => {
+    this.deviceService.add_action(this.newAction).then(action_id => {
       this.snackBar.open('Action created!', 'OK', {duration: 2000});
       this.deviceActions.push(<DeviceAction>{
-        id: response['action_id'],
+        id: action_id,
         action_device: this.newAction.action_device,
         condition_device: this.newAction.condition_device,
         condition_value: this.newAction.condition_value,
@@ -134,9 +124,7 @@ export class ActionComponent implements OnInit, OnDestroy {
 
   private clone_capability(capability: Capability): Capability {
     return <Capability>{
-      id: capability.id,
       component: capability.component,
-      type: capability.type,
       label: capability.label,
       name: capability.name,
       icon: capability.icon

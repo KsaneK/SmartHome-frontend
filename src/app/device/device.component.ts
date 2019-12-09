@@ -17,7 +17,6 @@ import { IMqttMessage, MqttService } from 'ngx-mqtt';
   styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent implements OnInit, OnDestroy {
-  private user_status_sub: Subscription;
   private addDeviceFormGroup: FormGroup;
   private errorMessage: string;
   private iconList: CapabilityIcon[] = ICON_LIST;
@@ -35,29 +34,20 @@ export class DeviceComponent implements OnInit, OnDestroy {
               private accountService: AccountService) { }
 
   ngOnInit() {
-    this.accountService.refresh_user_status();
     this.capability_values = new Map();
-    this.user_status_sub = this.accountService.get_user_status().subscribe(res => {
-      if (res && res.status !== 'authenticated') {
-        this.router.navigate(['/account/login']);
-      } else {
-        this.loadCapabilities();
-        this.loadDeviceTypes();
-        this.loadMyDevices();
-        console.log('/' + this.accountService.get_username() + '/#');
-        this.subscription = this._mqttService.observe('/' + this.accountService.get_username() + '/#')
-          .subscribe((message: IMqttMessage) => {
-            console.log('subscription event!');
-            console.log(message);
-            const args: string[] = message.topic.split('/');
-            const cap_slug: string = args[args.length - 2];
-            let value;
-            value = parseInt(message.payload.toString(), 10);
-            console.log('Updated ' + cap_slug + ' component - value=' + value);
-            this.capability_values.set(cap_slug, value);
-          });
-      }
-    });
+
+    this.loadCapabilities();
+    this.loadDeviceTypes();
+    this.loadMyDevices();
+    this.subscription = this._mqttService.observe('/' + this.accountService.get_username() + '/#')
+      .subscribe((message: IMqttMessage) => {
+        const args: string[] = message.topic.split('/');
+        const cap_slug: string = args[args.length - 2];
+        const value = parseInt(message.payload.toString(), 10);
+        console.log('Updated ' + cap_slug + ' component - value=' + value);
+        this.capability_values.set(cap_slug, value);
+      });
+
     this.addDeviceFormGroup = this.formBuilder.group({
       devName: ['', Validators.required],
       devType: ['', Validators.required],
@@ -67,8 +57,9 @@ export class DeviceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.user_status_sub.unsubscribe();
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private initItemRows(): FormGroup {
@@ -141,7 +132,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
   }
 
   private deleteDevice(id: number) {
-    this.deviceService.delete_device(id).then(response => {
+    this.deviceService.delete_device(id).then(() => {
       this.devices = this.devices.filter(d => d.id !== id);
       this.snackBar.open('Device deleted!', 'OK', {duration: 2000});
     }, err => {
@@ -151,17 +142,15 @@ export class DeviceComponent implements OnInit, OnDestroy {
 
   private pub_switch(event: MatSlideToggleChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
-    console.log(topic);
-    this._mqttService.publish(topic, String(event.checked.valueOf() ? 1 : 0)).toPromise().then(res => {
-      console.log(res);
+    this.deviceService.publish_status(topic, event.checked.valueOf() ? 1 : 0).then(() => {
+      console.log('Published ' + event.checked.valueOf() + ' to ' + topic);
     });
   }
 
   private pub_slider(event: MatSliderChange, device: string, capability: string) {
     const topic: string = '/' + this.accountService.get_username() + '/' + device + '/' + capability;
-    console.log(event.value);
-    this._mqttService.publish(topic, String(event.value)).toPromise().then(res => {
-      console.log(res);
+    this.deviceService.publish_status(topic, event.value).then(() => {
+      console.log('Published ' + String(event.value) + ' to ' + topic);
     });
   }
 }

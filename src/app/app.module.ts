@@ -19,6 +19,7 @@ import { DevicePageComponent } from './device-page/device-page.component';
 import { AngularFullpageModule } from '@fullpage/angular-fullpage';
 import { ActionComponent } from './action/action.component';
 import { ChartComponent } from './chart/chart.component';
+import { JwtModule } from '@auth0/angular-jwt';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'localhost',
@@ -41,6 +42,14 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   ],
   imports: [
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: function  tokenGetter() {
+          return localStorage.getItem('access_token'); },
+        whitelistedDomains: ['localhost:8080'],
+        blacklistedRoutes: ['/api/account/login']
+      }
+    }),
     BrowserModule,
     AppRoutingModule,
     LayoutModule,
