@@ -6,6 +6,9 @@
     <i class="fa-10x {{ device.type.icon }}" id="device-icon"></i>
     <mat-card-title>
       <h2>{{ device.name }}</h2>
+      <h6 *ngIf="device.owner != accountService.get_username()">
+        Shared by {{ device.owner }}
+      </h6>
     </mat-card-title>
     <div [ngSwitch]="device.mainCapability.component" class="capability">
       <h2>
@@ -14,8 +17,12 @@
         <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+device.mainCapability.name)">
           {{ mqtt_topic }}/{{ device.mainCapability.name }}
         </button>
-        <button mat-raised-button color="primary" style="margin-left: 5px;"
+        <button *ngIf="owner === undefined" mat-raised-button color="primary" style="margin-left: 5px;"
                 routerLink="/chart/{{ device.slug }}/{{ device.mainCapability.name }}">
+          chart
+        </button>
+        <button *ngIf="owner !== undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.owner }}/{{ device.slug }}/{{ device.mainCapability.name }}">
           chart
         </button>
       </h2>
@@ -42,8 +49,12 @@
         <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+cap.name)">
           {{ mqtt_topic }}/{{ cap.name }}
         </button>
-        <button mat-raised-button color="primary" style="margin-left: 5px;"
+        <button *ngIf="owner === undefined" mat-raised-button color="primary" style="margin-left: 5px;"
                 routerLink="/chart/{{ device.slug }}/{{ cap.name }}">
+          chart
+        </button>
+        <button *ngIf="owner !== undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.owner }}/{{ device.slug }}/{{ cap.name }}">
           chart
         </button>
         <div [ngSwitch]="cap.component">
@@ -63,6 +74,19 @@
         </div>
       </div>
     </mat-card-content>
+    <mat-card *ngIf="device.owner === accountService.get_username()">
+      <h3>Share your device to others!</h3>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Username" [(ngModel)]="to_share">
+      </mat-form-field>
+      <button mat-raised-button color="primary" style="margin-left: 5px" (click)="share(to_share)">Share</button>
+      <mat-list>
+        <mat-list-item *ngFor="let user of shared_to_users">
+          <i class="fas fa-trash fa-1x" (click)="stopSharing(user)" style="cursor: pointer"></i>
+          &nbsp;&nbsp;{{ user.username }}
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
   </mat-card>
 </div>
 <div *ngIf="!device" style="margin: 30px auto auto; text-align: center;">

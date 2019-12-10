@@ -13,6 +13,7 @@ import { AccountService } from '../services/account.service';
 export class ChartComponent implements OnInit, OnDestroy {
 
   private chart: Chart;
+  private owner: string;
   private device: string;
   private capability: string;
   private dates: string[];
@@ -24,14 +25,12 @@ export class ChartComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let response: DeviceHistoryResponse[];
-    this.route.params.subscribe(params => {
-      this.device = params['device'];
-      this.capability = params['capability'];
-    });
-    this.deviceSerice.get_historical_data(this.device, this.capability).then(r => {
+    this.owner = this.route.snapshot.params['owner'];
+    this.device = this.route.snapshot.params['device'];
+    this.capability = this.route.snapshot.params['capability'];
+    this.deviceSerice.get_historical_data(this.owner, this.device, this.capability).then(r => {
       response = r;
       this.dates = response.map(data => data.date.toString());
-      console.log(this.dates);
       this.values = response.map(data => data.value);
 
       this.chart = new Chart('chart-canvas', {
@@ -57,8 +56,6 @@ export class ChartComponent implements OnInit, OnDestroy {
               type: 'time',
               time: {
                 parser: 'YYYY-MM-DD HH:mm:ss',
-                unit: 'second',
-                stepSize: 1,
                 tooltipFormat: 'll HH:mm:ss',
               }
             }],

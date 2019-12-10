@@ -7,6 +7,7 @@ import { Device } from '../interfaces/device';
 import { DeviceAction } from '../interfaces/device-action';
 import { AddDeviceResponse } from '../interfaces/add-device-response';
 import { DeviceHistoryResponse } from '../interfaces/device-history-response';
+import {User} from '../interfaces/user';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,14 @@ export class DeviceService {
     return this.http.get<Device[]>('/api/device').toPromise();
   }
 
-  public get_device(slug: string) {
+  public get_shared_devices(): Promise<Device[]> {
+    return this.http.get<Device[]>('/api/device/shared').toPromise();
+  }
+
+  public get_device(owner: string, slug: string) {
+    if (owner !== undefined) {
+      return this.http.get<Device>('/api/device/' + owner + '/' + slug).toPromise();
+    }
     return this.http.get<Device>('/api/device/' + slug).toPromise();
   }
 
@@ -71,7 +79,7 @@ export class DeviceService {
       notify: notify,
     };
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
-    return this.http.put('api/device/action_notify/put', requestData, {headers: headers}).toPromise();
+    return this.http.put('api/action/notify', requestData, {headers: headers}).toPromise();
   }
 
   public delete_action(id: number) {
@@ -82,8 +90,11 @@ export class DeviceService {
     return this.http.delete('/api/device/' + id).toPromise();
   }
 
-  public get_historical_data(device: string, capability: string): Promise<DeviceHistoryResponse[]> {
-    return this.http.get<DeviceHistoryResponse[]>('/api/statushistory/dev/' + device + '/cap/' + capability).toPromise();
+  public get_historical_data(owner: string, device: string, capability: string): Promise<DeviceHistoryResponse[]> {
+    if (owner !== undefined) {
+      return this.http.get<DeviceHistoryResponse[]>('/api/statushistory/' + owner + '/' + device + '/' + capability).toPromise();
+    }
+    return this.http.get<DeviceHistoryResponse[]>('/api/statushistory/' + device + '/' + capability).toPromise();
   }
 
   public publish_status(topic: string, value: number) {
@@ -93,5 +104,22 @@ export class DeviceService {
     };
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
     return this.http.post('/api/statushistory', JSON.stringify(requestData), {headers: headers}).toPromise();
+  }
+
+  public share_device(id: number, to_share: string): Promise<number> {
+    const requestData = {
+      'deviceId': id,
+      'username': to_share
+    };
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.post<number>('/api/device/share', JSON.stringify(requestData), {headers: headers}).toPromise();
+  }
+
+  public get_shared_to_users(id: number): Promise<User[]> {
+    return this.http.get<User[]>('/api/device/shared_to/' + id).toPromise();
+  }
+
+  public stop_sharing(deviceId: number, username: string) {
+    return this.http.delete('/api/device/share/' + deviceId + '/' + username).toPromise();
   }
 }

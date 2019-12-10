@@ -18,8 +18,10 @@ const routes: Routes = [
   {path: 'profile/:tab', component: ProfileComponent, canActivate: [UserGuard]},
   {path: 'devices', component: DeviceComponent, canActivate: [UserGuard]},
   {path: 'device/:slug', component: DevicePageComponent, canActivate: [UserGuard]},
+  {path: 'device/:owner/:slug', component: DevicePageComponent, canActivate: [UserGuard]},
   {path: 'device/:name', component: DeviceComponent, canActivate: [UserGuard]},
   {path: 'actions', component: ActionComponent, canActivate: [UserGuard]},
+  {path: 'chart/:owner/:device/:capability', component: ChartComponent, canActivate: [UserGuard]},
   {path: 'chart/:device/:capability', component: ChartComponent, canActivate: [UserGuard]},
 ];
 

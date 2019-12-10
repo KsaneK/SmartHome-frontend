@@ -23,6 +23,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
   private capabilities: Capability[];
   private deviceTypes: DeviceType[];
   private devices: Device[];
+  private sharedDevices: Device[];
   private subscription: Subscription;
   private capability_values: Map<string, any>;
 
@@ -38,14 +39,15 @@ export class DeviceComponent implements OnInit, OnDestroy {
 
     this.loadCapabilities();
     this.loadDeviceTypes();
-    this.loadMyDevices();
+    this.loadDevices();
     this.subscription = this._mqttService.observe('/' + this.accountService.get_username() + '/#')
       .subscribe((message: IMqttMessage) => {
         const args: string[] = message.topic.split('/');
-        const cap_slug: string = args[args.length - 2];
+        const owner: string = args[args.length - 3];
+        const dev_slug: string = args[args.length - 2];
         const value = parseInt(message.payload.toString(), 10);
-        console.log('Updated ' + cap_slug + ' component - value=' + value);
-        this.capability_values.set(cap_slug, value);
+        console.log('Updated ' + dev_slug + ' component - value=' + value);
+        this.capability_values.set(owner + '/' + dev_slug, value);
       });
 
     this.addDeviceFormGroup = this.formBuilder.group({
@@ -109,12 +111,19 @@ export class DeviceComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadMyDevices(): void {
+  private loadDevices(): void {
     this.deviceService.get_my_devices().then(response => {
       for (const dev of response) {
-        this.capability_values.set(dev.slug, dev.mainCapability.last_value);
+        console.log('setting ' + dev.slug + ' value ' + dev.mainCapability.last_value);
+        this.capability_values.set(dev.owner + '/' + dev.slug, dev.mainCapability.last_value);
       }
       this.devices = response;
+    });
+    this.deviceService.get_shared_devices().then(response => {
+      for (const dev of response) {
+        this.capability_values.set(dev.owner + '/' + dev.slug, dev.mainCapability.last_value);
+      }
+      this.sharedDevices = response;
     });
   }
 
